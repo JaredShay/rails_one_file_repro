@@ -10,13 +10,12 @@ if ARGV[0] == '--debug'
     def debug(*args, &block)
       original_debug(*args, &block)
 
-      caller_line = caller.detect do |caller_line|
-        # Change logic in here if you want to try match on lines that aren't in
-        # this file.
-        caller_line.match(/template/)
-      end
+      basename = File.basename(__FILE__)
 
-      self.original_debug("\t↳ #{File.basename(caller_line)}") if caller_line
+      # Change this to get different stacktrace output.
+      caller_line = caller.detect { |line| line.match(Regexp.escape(basename)) }
+
+      self.original_debug("\t↳ #{caller_line}") if caller_line
     end
   end
 
